@@ -1,13 +1,18 @@
 import { createSlice, nanoid } from "@reduxjs/toolkit";
 
 
+
+
+
 const todoSlice = createSlice({
+
+
     name: 'todo',
     initialState:{
         searchTerm: "",
         todos: [],
         completedTodos: [],
-        visibilityFilter: [],
+        visibilityFilter: '',
        
     },
     reducers:{
@@ -16,8 +21,11 @@ const todoSlice = createSlice({
                 title: action.payload.title,
                 description: action.payload.description,
                 id: nanoid(),
-                completed: action.payload.completed
+                completed: action.payload.completed,
+            
             });
+            state.visibilityFilter = 'All'
+            
             
         },
         deleteTodo: (state, action) => {

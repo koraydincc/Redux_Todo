@@ -6,7 +6,8 @@ const formSlice = createSlice({
     initialState: {
         title:'',
         description: '',
-        completed: false
+        completed: false,
+  
     },
     reducers:{
         changeTitle: (state,action) => {
@@ -18,7 +19,8 @@ const formSlice = createSlice({
         },
         changeCompleted: (state,action) => {
             state.completed = action.payload
-        }
+        },
+     
     },
     extraReducers(builder) {
         builder.addCase(addTodo, (state, action) => {
@@ -26,6 +28,8 @@ const formSlice = createSlice({
                 ...state,
                 title: '',
                 description: '',
+                segmented: 'Active'
+                
             };
         });
     }
@@ -33,6 +37,6 @@ const formSlice = createSlice({
     
 })
 
-export const {changeTitle, changeCompleted,changeDescription} = formSlice.actions;
+export const {changeTitle, changeCompleted,changeDescription,changeSegmented} = formSlice.actions;
 
 export const formReducer = formSlice.reducer;
