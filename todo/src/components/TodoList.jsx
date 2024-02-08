@@ -53,23 +53,27 @@ function TodoList() {
     return [];
   }
 
-  const isCompleted = (text) => {
-    if (text === 'Completed') {
-      return { textDecoration: 'line-through', color:'green' };
-    }
-    return {};
+  const style = (completed) => {
+      if (completed) {
+         return {
+          textDecoration: 'line-through'
+         }
+      }
+    
   }
+
+
 
   return (
     <>
       {renderFilteredTodos().map(todo => (
         <Card
           key={todo.id}
-          style={{ width: 300, marginTop: 16, ...isCompleted(visibilityFilter) }}
+          style={{ width: 300, marginTop: 16, ...style(todo.completed)  }}
           actions={[
-            <DeleteOutlined style={{ color: 'red' }} onClick={() => handleSettings(todo.id)} key="delete" />,
+            <DeleteOutlined style={{ color: 'red'  }} onClick={() => handleSettings(todo.id)} key="delete" />,
             <EditOutlined key="edit" />,
-            <CheckOutlined onClick={() => handleCompleted(todo.id, todo.title, todo.description, todo.completed)} />,
+            <CheckOutlined style={{color:'green'}} onClick={() => handleCompleted(todo.id, todo.title, todo.description, todo.completed)} />,
           ]}
         >
           <Meta
