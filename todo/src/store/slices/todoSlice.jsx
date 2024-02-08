@@ -1,4 +1,4 @@
-import { createSlice, nanoid } from "@reduxjs/toolkit";
+import { createSlice, nanoid, current } from "@reduxjs/toolkit";
 
 const todoSlice = createSlice({
     name: 'todo',
@@ -24,35 +24,40 @@ const todoSlice = createSlice({
         showTodos: (state, action) => {
             const { completed } = action.payload;
             if (completed === 'Active') {
-                state.filteredTodos = state.todos.filter(todo => !todo.completed);
+              state.filteredTodos = state.todos.filter(todo => !todo.completed);
             } else if (completed === 'Completed') {
-                state.filteredTodos = state.todos.filter(todo => todo.completed);
+              state.filteredTodos = state.completedTodos;
             } else {
-                state.filteredTodos = state.todos;
+              state.filteredTodos = state.todos;
             }
-        },
+          },
+          
+          
+          
+          
         completedTodo: (state, action) => {
             const id = action.payload.id;
-            const completedTask = state.todos.find(task => task.id === id);
+            
+            const completedTask = state.todos.find((todo)=> todo.id === id);
+           console.log(completedTask)
             if (completedTask) {
                 completedTask.completed = true;
+                
                 state.completedTodos.push({
-                    title: action.payload.title,
-                    description: action.payload.description,
-                    id: action.payload.id,
+                    title: completedTask.title,
+                    description: completedTask.description,
+                    id: completedTask.id,
                     completed: true
                 });
-                // state.todos dizisinden tamamlanan görevi kaldırın
                 state.todos = state.todos.filter(task => task.id !== id);
+                console.log(current(state))
+                
+                
                 console.log("Action Payload:", action.payload);
                 console.log(state.completedTodos);
             }
         }
-        
-        
-        
-        
-        
+ 
     }}   
 );
 

@@ -12,10 +12,14 @@ function TodoList() {
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
   const todos = useSelector((state) => state.todo.todos);
-  const completedTodos = useSelector((state) => state.todo.completedTodos);
 
-  const handleCompleted = (id) => {
-    dispatch(completedTodo(id));
+  const handleCompleted = (id, title, description, completed) => {
+    dispatch(completedTodo({
+      id: id,
+      title: title,
+      description: description,
+      completed: !completed
+    }));
   };
 
   const handleDelete = (id) => {
@@ -44,7 +48,7 @@ function TodoList() {
             actions={[
               <DeleteOutlined style={{ color: 'red' }} onClick={() => handleSettings(todo.id)} key="delete" />,
               <EditOutlined key="edit" />,
-              <CheckOutlined onClick={() => handleCompleted(todo.id)} />,
+              <CheckOutlined onClick={() => handleCompleted(todo.id, todo.title,todo.completed, todo.description)} />,
             ]}
           >
             <Meta
@@ -64,16 +68,11 @@ function TodoList() {
       >
         <p>Are you sure you want to delete this To-Do?</p>
       </Modal>
-      {completedTodos.map((todo) => {
-        return (
-          <div key={todo.id}>
-            <p>{todo.title}</p>
-            <p>{todo.description}</p>
-          </div>
-        );
-      })}
     </>
   );
 }
 
 export default TodoList;
+
+
+

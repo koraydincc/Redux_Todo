@@ -7,7 +7,17 @@ function TodoFooter() {
   const dispatch = useDispatch();
 
   const handleSegment = (value) => {
-    dispatch(showTodos({ completed: value === 'Completed' }));
+    let completed;
+    if (value === 'Completed') {
+      completed = true;
+      dispatch(showTodos({ completed: true }));
+    } else if (value === 'Active') {
+      completed = false;
+      dispatch(showTodos({ completed: false }));
+    } else {
+      completed = undefined;
+      dispatch(showTodos({ completed: undefined }));
+    }
   };
 
   return (
