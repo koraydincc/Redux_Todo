@@ -12,6 +12,10 @@ function TodoList() {
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
   const todos = useSelector((state) => state.todo.todos);
+  const visibilityFilter = useSelector((state) => state.todo.visibilityFilter);
+  const completedTodos = useSelector((state)=> state.todo.completedTodos)
+
+
 
   const handleCompleted = (id, title, description, completed) => {
     dispatch(completedTodo({
@@ -21,6 +25,8 @@ function TodoList() {
       completed: !completed
     }));
   };
+   
+
 
   const handleDelete = (id) => {
     dispatch(deleteTodo(id));
@@ -41,38 +47,87 @@ function TodoList() {
 
   return (
     <>
-      {todos.map((todo) => (
+    {visibilityFilter.payload === 'All' &&
+      <>
+        {todos.map((todo) => (
+          <Flex key={todo.id}>
+            <Card
+              style={{ width: 300, marginTop: 16 }}
+              actions={[
+                <DeleteOutlined style={{ color: 'red' }} onClick={() => handleSettings(todo.id)} key="delete" />,
+                <EditOutlined key="edit" />,
+                <CheckOutlined onClick={() => handleCompleted(todo.id, todo.title, todo.description, todo.completed)} />,
+              ]}
+            > 
+              <Meta title={todo.title} />
+            </Card>
+          </Flex>
+        ))}
+        {completedTodos.map((completedTodo) => (
+          <Flex key={completedTodo.id}>
+            <Card
+              style={{ width: 300, marginTop: 16 }}
+              actions={[
+                <DeleteOutlined style={{ color: 'red' }} onClick={() => handleSettings(completedTodo.id)} key="delete" />,
+                <EditOutlined key="edit" />,
+                <CheckOutlined onClick={() => handleCompleted(completedTodo.id, completedTodo.title, completedTodo.description, completedTodo.completed)} />,
+              ]}
+            > 
+              <Meta title={completedTodo.title} />
+            </Card>
+          </Flex>
+        ))}
+      </>
+    }
+    {visibilityFilter.payload === 'Active' &&
+      todos.map((todo) => (
         <Flex key={todo.id}>
           <Card
             style={{ width: 300, marginTop: 16 }}
             actions={[
               <DeleteOutlined style={{ color: 'red' }} onClick={() => handleSettings(todo.id)} key="delete" />,
               <EditOutlined key="edit" />,
-              <CheckOutlined onClick={() => handleCompleted(todo.id, todo.title,todo.completed, todo.description)} />,
+              <CheckOutlined onClick={() => handleCompleted(todo.id, todo.title, todo.description, todo.completed)} />,
             ]}
-          >
-            <Meta
-              title={todo.title}
-              description={todo.description}
-            />
+          > 
+            <Meta title={todo.title} />
           </Card>
         </Flex>
-      ))}
-      <Modal
-        title="Confirm"
-        open={isOpen}
-        onOk={() => handleDelete(deleteId)}
-        onCancel={handleCancel}
-        okText="Delete"
-        cancelText="Cancel"
-      >
-        <p>Are you sure you want to delete this To-Do?</p>
-      </Modal>
-    </>
+      ))
+    }
+    {visibilityFilter.payload === 'Completed' &&
+      completedTodos.map((completedTodo) => (
+        <Flex key={completedTodo.id}>
+          <Card
+            style={{ width: 300, marginTop: 16 }}
+            actions={[
+              <DeleteOutlined style={{ color: 'red' }} onClick={() => handleSettings(completedTodo.id)} key="delete" />,
+              <EditOutlined key="edit" />,
+              <CheckOutlined onClick={() => handleCompleted(completedTodo.id, completedTodo.title, completedTodo.description, completedTodo.completed)} />,
+            ]}
+          > 
+            <Meta title={completedTodo.title} />
+          </Card>
+        </Flex>
+      ))
+    }
+    <Modal
+      title="Confirm"
+      open={isOpen}
+      onOk={() => handleDelete(deleteId)}
+      onCancel={handleCancel}
+      okText="Delete"
+      cancelText="Cancel"
+    >
+      <p>Are you sure you want to delete this To-Do?</p>
+    </Modal>
+  </>
+  
+  
+  
+
+  
   );
 }
 
 export default TodoList;
-
-
-
