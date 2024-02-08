@@ -1,5 +1,6 @@
 import { createSlice, nanoid } from "@reduxjs/toolkit";
 
+
 const todoSlice = createSlice({
     name: 'todo',
     initialState:{
@@ -17,11 +18,14 @@ const todoSlice = createSlice({
                 id: nanoid(),
                 completed: action.payload.completed
             });
+            
         },
         deleteTodo: (state, action) => {
             state.todos = state.todos.filter((todo) => todo.id !== action.payload);
+            state.completedTodos = state.completedTodos.filter((todo)=> todo.id !== action.payload)
         },
         showTodos(state, action) {
+            
             state.visibilityFilter = action.payload;
             console.log(state.visibilityFilter)
         },

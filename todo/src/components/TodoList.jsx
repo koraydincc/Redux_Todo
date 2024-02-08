@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Card, Flex, Modal, message } from 'antd';
-import { EditOutlined, DeleteOutlined, CheckOutlined } from '@ant-design/icons';
+import { Card, Modal, message } from 'antd';
+import { DeleteOutlined, EditOutlined, CheckOutlined } from '@ant-design/icons';
 import { completedTodo, deleteTodo } from '../store/slices/todoSlice';
 import './TodoList.css';
 
@@ -13,11 +13,10 @@ function TodoList() {
   const dispatch = useDispatch();
   const todos = useSelector((state) => state.todo.todos);
   const visibilityFilter = useSelector((state) => state.todo.visibilityFilter);
-  const completedTodos = useSelector((state)=> state.todo.completedTodos)
-
-
+  const completedTodos = useSelector((state)=> state.todo.completedTodos);
 
   const handleCompleted = (id, title, description, completed) => {
+    setIsOpen(true)
     dispatch(completedTodo({
       id: id,
       title: title,
@@ -25,8 +24,6 @@ function TodoList() {
       completed: !completed
     }));
   };
-   
-
 
   const handleDelete = (id) => {
     dispatch(deleteTodo(id));
@@ -45,88 +42,53 @@ function TodoList() {
     setDeleteId(null);
   };
 
+  function renderFilteredTodos() {
+    if (visibilityFilter === 'All') {
+      return todos.concat(completedTodos);
+    } else if (visibilityFilter === 'Active') {
+      return todos;
+    } else if (visibilityFilter === 'Completed') {
+      return completedTodos;
+    }
+    return [];
+  }
+
+  const isCompleted = (text) => {
+    if (text === 'Completed') {
+      return { textDecoration: 'line-through', color:'green' };
+    }
+    return {};
+  }
+
   return (
     <>
-    {visibilityFilter.payload === 'All' &&
-      <>
-        {todos.map((todo) => (
-          <Flex key={todo.id}>
-            <Card
-              style={{ width: 300, marginTop: 16 }}
-              actions={[
-                <DeleteOutlined style={{ color: 'red' }} onClick={() => handleSettings(todo.id)} key="delete" />,
-                <EditOutlined key="edit" />,
-                <CheckOutlined onClick={() => handleCompleted(todo.id, todo.title, todo.description, todo.completed)} />,
-              ]}
-            > 
-              <Meta title={todo.title} />
-            </Card>
-          </Flex>
-        ))}
-        {completedTodos.map((completedTodo) => (
-          <Flex key={completedTodo.id}>
-            <Card
-              style={{ width: 300, marginTop: 16 }}
-              actions={[
-                <DeleteOutlined style={{ color: 'red' }} onClick={() => handleSettings(completedTodo.id)} key="delete" />,
-                <EditOutlined key="edit" />,
-                <CheckOutlined onClick={() => handleCompleted(completedTodo.id, completedTodo.title, completedTodo.description, completedTodo.completed)} />,
-              ]}
-            > 
-              <Meta title={completedTodo.title} />
-            </Card>
-          </Flex>
-        ))}
-      </>
-    }
-    {visibilityFilter.payload === 'Active' &&
-      todos.map((todo) => (
-        <Flex key={todo.id}>
-          <Card
-            style={{ width: 300, marginTop: 16 }}
-            actions={[
-              <DeleteOutlined style={{ color: 'red' }} onClick={() => handleSettings(todo.id)} key="delete" />,
-              <EditOutlined key="edit" />,
-              <CheckOutlined onClick={() => handleCompleted(todo.id, todo.title, todo.description, todo.completed)} />,
-            ]}
-          > 
-            <Meta title={todo.title} />
-          </Card>
-        </Flex>
-      ))
-    }
-    {visibilityFilter.payload === 'Completed' &&
-      completedTodos.map((completedTodo) => (
-        <Flex key={completedTodo.id}>
-          <Card
-            style={{ width: 300, marginTop: 16 }}
-            actions={[
-              <DeleteOutlined style={{ color: 'red' }} onClick={() => handleSettings(completedTodo.id)} key="delete" />,
-              <EditOutlined key="edit" />,
-              <CheckOutlined onClick={() => handleCompleted(completedTodo.id, completedTodo.title, completedTodo.description, completedTodo.completed)} />,
-            ]}
-          > 
-            <Meta title={completedTodo.title} />
-          </Card>
-        </Flex>
-      ))
-    }
-    <Modal
-      title="Confirm"
-      open={isOpen}
-      onOk={() => handleDelete(deleteId)}
-      onCancel={handleCancel}
-      okText="Delete"
-      cancelText="Cancel"
-    >
-      <p>Are you sure you want to delete this To-Do?</p>
-    </Modal>
-  </>
-  
-  
-  
-
-  
+      {renderFilteredTodos().map(todo => (
+        <Card
+          key={todo.id}
+          style={{ width: 300, marginTop: 16, ...isCompleted(visibilityFilter) }}
+          actions={[
+            <DeleteOutlined style={{ color: 'red' }} onClick={() => handleSettings(todo.id)} key="delete" />,
+            <EditOutlined key="edit" />,
+            <CheckOutlined onClick={() => handleCompleted(todo.id, todo.title, todo.description, todo.completed)} />,
+          ]}
+        >
+          <Meta
+            title={todo.title}
+            description={todo.description}
+          />
+        </Card>
+      ))}
+      <Modal
+        title="Confirm"
+        open={isOpen}
+        onOk={() => handleDelete(deleteId)}
+        onCancel={handleCancel}
+        okText="Delete"
+        cancelText="Cancel"
+      >
+        <p>Are you sure you want to delete this To-Do?</p>
+      </Modal>
+    </>
   );
 }
 
