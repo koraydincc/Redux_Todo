@@ -1,4 +1,4 @@
-import { createSlice, nanoid } from "@reduxjs/toolkit";
+import { createSlice, nanoid,current } from "@reduxjs/toolkit";
 
 
 
@@ -50,11 +50,27 @@ const todoSlice = createSlice({
                 });
                 state.todos = state.todos.filter(task => task.id !== id);
             }
+        },
+        toggleEvent: (state, action) => {
+            const { id } = action.payload;
+            const completedTodo = state.completedTodos.find(todo => todo.id === id);
+            
+            if (completedTodo) {
+                state.todos.push(completedTodo);
+                
+                state.completedTodos = state.completedTodos.filter(todo => todo.id !== id);
+
+                console.log(current(completedTodo))
+                completedTodo.completed = false;
+                
+                state.visibilityFilter = 'All';
+            } 
         }
+        
     }
 });
 
-export const { addTodo, deleteTodo, showTodos, completedTodo } = todoSlice.actions;
+export const { addTodo, deleteTodo, showTodos, completedTodo,toggleEvent } = todoSlice.actions;
 
 
 export const todoReducer = todoSlice.reducer;

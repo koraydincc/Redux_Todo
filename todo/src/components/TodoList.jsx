@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Card, Modal, message } from 'antd';
-import { DeleteOutlined, EditOutlined, CheckCircleOutlined, LikeOutlined } from '@ant-design/icons';
-import { completedTodo, deleteTodo } from '../store/slices/todoSlice';
+import { DeleteOutlined, EditOutlined, CheckCircleOutlined, RedoOutlined } from '@ant-design/icons';
+import { completedTodo, deleteTodo, toggleEvent } from '../store/slices/todoSlice';
 import './TodoList.css';
 
 const { Meta } = Card;
@@ -13,6 +13,7 @@ function TodoList() {
   const dispatch = useDispatch();
   const todos = useSelector((state) => state.todo.todos);
   const visibilityFilter = useSelector((state) => state.todo.visibilityFilter);
+  
   const completedTodos = useSelector((state) => state.todo.completedTodos);
 
   const handleCompleted = (id, title, description, completed) => {
@@ -25,12 +26,20 @@ function TodoList() {
     message.success('Mission Completed ! ')
   };
 
+
   const handleDelete = (id) => {
     dispatch(deleteTodo(id));
     message.success('Todo deleted');
     setIsOpen(false);
     setDeleteId(null);
   };
+
+  const toggle = (id, completed, title, description) => {
+    dispatch(toggleEvent({ id: id, completed:completed, title: title, description: description }));
+    message.info('You Back the Mission')
+    
+}
+
 
   const handleSettings = (id) => {
     setIsOpen(true);
@@ -42,6 +51,8 @@ function TodoList() {
     setDeleteId(null);
   };
 
+  
+  
   function renderFilteredTodos() {
     if (visibilityFilter === 'All') {
       return todos.concat(completedTodos);
@@ -72,7 +83,7 @@ function TodoList() {
             <DeleteOutlined style={{ color: 'red' }} onClick={() => handleSettings(todo.id)} key="delete" />,
             <EditOutlined key="edit" />,
             todo.completed ? (
-              <LikeOutlined style={{ color: 'green' }} />
+              <RedoOutlined onClick={() => toggle(todo.id, todo.completed)} style={{ color: 'green' }} />
             ) : <CheckCircleOutlined style={{ color: 'green' }} onClick={() => handleCompleted(todo.id, todo.title, todo.description, todo.completed) } />,
           ]}
         >
