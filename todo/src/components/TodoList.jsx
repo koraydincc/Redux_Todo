@@ -4,6 +4,8 @@ import { Card, Modal, message } from 'antd';
 import { DeleteOutlined, EditOutlined, CheckCircleOutlined, RedoOutlined } from '@ant-design/icons';
 import { completedTodo, deleteTodo, toggleEvent } from '../store/slices/todoSlice';
 import './TodoList.css';
+import Spin from 'antd/es/spin';
+
 
 const { Meta } = Card;
 
@@ -64,6 +66,8 @@ function TodoList() {
     return [];
   }
 
+
+
   const getTodoStyle = (completed) => {
     if (completed) {
       return {
@@ -75,22 +79,35 @@ function TodoList() {
 
   return (
     <>
+
       {renderFilteredTodos().map(todo => (
+      
         <Card
+          
+          hoverable={true}
+          size='long'
           key={todo.id}
           style={{ width: 300, marginTop: 16, ...getTodoStyle(todo.completed) }}
           actions={[
+            
             <DeleteOutlined style={{ color: 'red' }} onClick={() => handleSettings(todo.id)} key="delete" />,
             <EditOutlined key="edit" />,
-            todo.completed ? (
+            todo.completed ?  (
               <RedoOutlined onClick={() => toggle(todo.id, todo.completed)} style={{ color: 'green' }} />
             ) : <CheckCircleOutlined style={{ color: 'green' }} onClick={() => handleCompleted(todo.id, todo.title, todo.description, todo.completed) } />,
           ]}
         >
-          <Meta
-            title={todo.title}
-            description={todo.description}
-          />
+          <div className='card'>
+            <div className='card-content'>
+              <p className='title'>
+                {todo.title}
+              </p>
+              <p class="content">
+                  {todo.description}
+              </p>
+            </div>
+          </div>
+         
         </Card>
       ))}
       <Modal
