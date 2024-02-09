@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Card, Modal, message, Typography  } from 'antd';
-import { DeleteOutlined,SmileTwoTone, EditOutlined, CheckCircleOutlined, RedoOutlined } from '@ant-design/icons';
+import { DeleteOutlined,SmileTwoTone, EditOutlined, CheckCircleOutlined, RedoOutlined, FrownTwoTone, MehTwoTone   } from '@ant-design/icons';
 import { completedTodo, deleteTodo, toggleEvent } from '../store/slices/todoSlice';
 import './TodoList.css';
 
@@ -60,6 +60,15 @@ function TodoList() {
               return ( 
                  <Title type='secondary' level={4}>Add ToDo <SmileTwoTone/></Title>
               )
+              case 'Active':
+                return (
+                  <Title type='secondary' level={4}>You do not have active duty <FrownTwoTone /></Title>
+                )
+                case 'Completed':
+                  return (
+                    <Title type='secondary' level={4}>
+                    You have no completed tasks <MehTwoTone /></Title>
+                  )
             }
        }
 
@@ -113,7 +122,7 @@ function TodoList() {
               <Title type='danger' level={5} strong>
                 {todo.title}
               </Title>
-              <Text italic>
+              <Text italic >
                   {todo.description}
               </Text>
             </div>

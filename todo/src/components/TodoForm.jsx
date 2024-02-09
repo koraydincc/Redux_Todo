@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Input, Space, Modal } from 'antd';
+import { Button, Input, Space, Modal, message } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
 import { addTodo } from '../store/slices/todoSlice';
 import { changeDescription, changeTitle } from '../store/slices/formSlice';
@@ -19,10 +19,20 @@ function TodoForm() {
   };
 
   const showModal = () => {
+    if (title.length === 0) {
+          message.warning('Please add a title')
+          return false
+      
+    }
     setIsModalOpen(true);
   };
 
   const handleOk = () => {
+    if (description.length === 0) {
+      message.warning('Please add a description')
+      return false
+      
+    }
     dispatch(addTodo({
       title: title,
       description: description,
