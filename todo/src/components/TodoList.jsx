@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Card, Modal, message } from 'antd';
+import { Card, Modal, message, Typography  } from 'antd';
 import { DeleteOutlined, EditOutlined, CheckCircleOutlined, RedoOutlined } from '@ant-design/icons';
 import { completedTodo, deleteTodo, toggleEvent } from '../store/slices/todoSlice';
 import './TodoList.css';
 import Spin from 'antd/es/spin';
 
 
-const { Meta } = Card;
+const { Text } = Typography;
 
 function TodoList() {
   const [deleteId, setDeleteId] = useState(null);
@@ -99,12 +99,12 @@ function TodoList() {
         >
           <div className='card'>
             <div className='card-content'>
-              <p className='title'>
+              <Text type='warning' strong>
                 {todo.title}
-              </p>
-              <p class="content">
+              </Text>
+              <Text italic>
                   {todo.description}
-              </p>
+              </Text>
             </div>
           </div>
          
