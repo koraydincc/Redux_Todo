@@ -65,7 +65,8 @@ const todoSlice = createSlice({
                 
                 state.visibilityFilter = 'All';
             } 
-        }
+        },
+        
         
     }
 });

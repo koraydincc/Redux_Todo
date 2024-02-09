@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Card, Modal, message, Typography  } from 'antd';
-import { DeleteOutlined, EditOutlined, CheckCircleOutlined, RedoOutlined } from '@ant-design/icons';
+import { DeleteOutlined,SmileTwoTone, EditOutlined, CheckCircleOutlined, RedoOutlined } from '@ant-design/icons';
 import { completedTodo, deleteTodo, toggleEvent } from '../store/slices/todoSlice';
 import './TodoList.css';
-import Spin from 'antd/es/spin';
 
 
-const { Text } = Typography;
+
+const { Text, Title  } = Typography;
 
 function TodoList() {
   const [deleteId, setDeleteId] = useState(null);
@@ -53,7 +53,17 @@ function TodoList() {
     setDeleteId(null);
   };
 
-  
+  const itemList = () => {
+       if (renderFilteredTodos() <= 0) {
+            switch(visibilityFilter){
+              case 'All':
+              return ( 
+                 <Title type='secondary' level={4}>Add ToDo <SmileTwoTone/></Title>
+              )
+            }
+       }
+
+  }
   
   function renderFilteredTodos() {
     if (visibilityFilter === 'All') {
@@ -79,8 +89,9 @@ function TodoList() {
 
   return (
     <>
+      {renderFilteredTodos().length <= 0 ?  itemList() : 
 
-      {renderFilteredTodos().map(todo => (
+      renderFilteredTodos().map(todo => (
       
         <Card
           
@@ -99,9 +110,9 @@ function TodoList() {
         >
           <div className='card'>
             <div className='card-content'>
-              <Text type='warning' strong>
+              <Title type='danger' level={5} strong>
                 {todo.title}
-              </Text>
+              </Title>
               <Text italic>
                   {todo.description}
               </Text>
