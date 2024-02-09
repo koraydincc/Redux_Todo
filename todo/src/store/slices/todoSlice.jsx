@@ -60,18 +60,25 @@ const todoSlice = createSlice({
                 
                 state.completedTodos = state.completedTodos.filter(todo => todo.id !== id);
 
-                console.log(current(completedTodo))
+            
                 completedTodo.completed = false;
                 
                 state.visibilityFilter = 'All';
             } 
         },
+        editTodo: (state, action) => {
+            const { id, title, description } = action.payload;
+            const editTodo = state.todos.find(todo => todo.id === id);
+          
+    
+          },
+          
         
         
     }
 });
 
-export const { addTodo, deleteTodo, showTodos, completedTodo,toggleEvent } = todoSlice.actions;
+export const { addTodo, deleteTodo, showTodos, completedTodo,toggleEvent, editTodo } = todoSlice.actions;
 
 
 export const todoReducer = todoSlice.reducer;

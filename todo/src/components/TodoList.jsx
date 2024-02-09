@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Card, Modal, message, Typography  } from 'antd';
-import { DeleteOutlined,SmileTwoTone, EditOutlined, CheckCircleOutlined, RedoOutlined, FrownTwoTone, MehTwoTone   } from '@ant-design/icons';
-import { completedTodo, deleteTodo, toggleEvent } from '../store/slices/todoSlice';
-import './TodoList.css';
-
+import { Card, Modal, message, Typography, Popconfirm   } from 'antd';
+import { DeleteOutlined,SmileTwoTone, EditOutlined,QuestionCircleOutlined , CheckCircleOutlined, RedoOutlined, FrownTwoTone, MehTwoTone   } from '@ant-design/icons';
+import { completedTodo, deleteTodo, toggleEvent, editTodo } from '../store/slices/todoSlice';
+import EditModal from './EditModal';
 
 
 const { Text, Title  } = Typography;
 
 function TodoList() {
-  const [deleteId, setDeleteId] = useState(null);
-  const [isOpen, setIsOpen] = useState(false);
+
+  const [selectedEdit, setSelectedEdit] = useState([])
+  const [editModal, setEditModal] = useState(false);
   const dispatch = useDispatch();
   const todos = useSelector((state) => state.todo.todos);
   const visibilityFilter = useSelector((state) => state.todo.visibilityFilter);
@@ -27,14 +27,17 @@ function TodoList() {
     }));
     message.success('Mission Completed ! ')
   };
-
+  const editCancel = () => {
+    setEditModal(false);
+  }; 
 
   const handleDelete = (id) => {
     dispatch(deleteTodo(id));
     message.success('Todo deleted');
-    setIsOpen(false);
-    setDeleteId(null);
+
   };
+
+
 
   const toggle = (id, completed, title, description) => {
     dispatch(toggleEvent({ id: id, completed:completed, title: title, description: description }));
@@ -42,16 +45,6 @@ function TodoList() {
     
 }
 
-
-  const handleSettings = (id) => {
-    setIsOpen(true);
-    setDeleteId(id);
-  };
-
-  const handleCancel = () => {
-    setIsOpen(false);
-    setDeleteId(null);
-  };
 
   const itemList = () => {
        if (renderFilteredTodos() <= 0) {
@@ -85,8 +78,15 @@ function TodoList() {
     return [];
   }
 
-
-
+  
+  const handleEdit = ( todo ) => {
+    dispatch(editTodo({ id:todo.id ,title:todo.title ,description:todo.description }));
+    setSelectedEdit(todo)
+    setEditModal(true)
+  };
+  
+ 
+  
   const getTodoStyle = (completed) => {
     if (completed) {
       return {
@@ -109,14 +109,33 @@ function TodoList() {
           key={todo.id}
           style={{ width: 300, marginTop: 16, ...getTodoStyle(todo.completed) }}
           actions={[
-            
-            <DeleteOutlined style={{ color: 'red' }} onClick={() => handleSettings(todo.id)} key="delete" />,
-            <EditOutlined key="edit" />,
+             <Popconfirm
+             key='delete'
+             title="Are you sure delete this task?"
+             onConfirm={() => handleDelete(todo.id)}
+             okText="Yes"
+             cancelText="No"
+             >
+                  <DeleteOutlined style={{color: 'red'}}></DeleteOutlined>
+             </Popconfirm>,
+            <EditOutlined 
+                  style={{ color: todo.completed ? '#ccc' : '#1677FF'}} 
+                  key="edit" 
+                  onClick={() => {
+                    if (todo.completed) {
+                        message.warning('You cannot edit a completed task.');
+                    } else {
+                        handleEdit(todo);
+                    }
+                }}
+                
+            />,
             todo.completed ?  (
               <RedoOutlined onClick={() => toggle(todo.id, todo.completed)} style={{ color: 'green' }} />
             ) : <CheckCircleOutlined style={{ color: 'green' }} onClick={() => handleCompleted(todo.id, todo.title, todo.description, todo.completed) } />,
           ]}
         >
+          
           <div className='card'>
             <div className='card-content'>
               <Title type='danger' level={5} strong>
@@ -131,15 +150,16 @@ function TodoList() {
         </Card>
       ))}
       <Modal
-        title="Confirm"
-        open={isOpen}
-        onOk={() => handleDelete(deleteId)}
-        onCancel={handleCancel}
-        okText="Delete"
-        cancelText="Cancel"
-      >
-        <p>Are you sure you want to delete this To-Do?</p>
-      </Modal>
+        title='Edit'
+        open={editModal}
+        onOk={() => handleEdit() }
+        onCancel={editCancel}
+        
+        >
+          <EditModal selectedEdit={selectedEdit}/>
+        </Modal>
+
+     
       
     </>
   );
