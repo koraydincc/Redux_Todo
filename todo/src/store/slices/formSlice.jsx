@@ -1,5 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { addTodo } from "./todoSlice";
+import { addTodo, editTodo } from "./todoSlice";
+
+
 
 const formSlice = createSlice({
     name: 'form',
@@ -32,6 +34,15 @@ const formSlice = createSlice({
                 
             };
         });
+    },
+    extraRedu(builder) {
+        builder.addCase(editTodo, (state,action) => {
+            return {
+                ...state,
+                editTitle: '',
+                editDescription: ''
+            }
+        })
     }
     
     

@@ -10,7 +10,7 @@ const { Text, Title  } = Typography;
 
 function TodoList() {
 
-  const [selectedEdit, setSelectedEdit] = useState([])
+  const [selectedEdit, setSelectedEdit] = useState(null)
   const [editModal, setEditModal] = useState(false);
   const dispatch = useDispatch();
   const todos = useSelector((state) => state.todo.todos);
@@ -79,11 +79,35 @@ function TodoList() {
   }
 
   
-  const handleEdit = ( todo ) => {
-    dispatch(editTodo({ id:todo.id ,title:todo.title ,description:todo.description }));
-    setSelectedEdit(todo)
-    setEditModal(true)
-  };
+
+  const handleEdit = (todo) => {
+    
+    const previousData = { id: todo.id, title: todo.title, description: todo.description };
+
+ 
+    setEditModal(true);
+    setSelectedEdit(previousData);
+};
+
+const handleEditConfirm = (editedData) => {
+   
+    dispatch(editTodo({
+        id: editedData.id,
+        title: editedData.title,
+        description: editedData.description
+    }));
+
+    clearForm(editedData)
+
+    setEditModal(false);
+};
+
+const clearForm = (props) => {
+   return (props.title =' ',
+  props.description = '')
+}
+
+  
   
  
   
@@ -152,11 +176,15 @@ function TodoList() {
       <Modal
         title='Edit'
         open={editModal}
-        onOk={() => handleEdit() }
-        onCancel={editCancel}
-        
+        onOk={() => handleEditConfirm(selectedEdit) }
+        onCancel={() => {
+          editCancel()
+        }}
+
         >
-          <EditModal selectedEdit={selectedEdit}/>
+              <EditModal title={selectedEdit ? selectedEdit.title : ""} description={selectedEdit ? selectedEdit.description : ""} />
+
+
         </Modal>
 
      

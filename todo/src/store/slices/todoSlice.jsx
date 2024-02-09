@@ -1,5 +1,5 @@
 import { createSlice, nanoid,current } from "@reduxjs/toolkit";
-
+import {produce} from 'immer';
 
 
 
@@ -13,6 +13,8 @@ const todoSlice = createSlice({
         todos: [],
         completedTodos: [],
         visibilityFilter: '',
+        editTitle: '',
+        editDescription:'',
        
     },
     reducers:{
@@ -67,18 +69,35 @@ const todoSlice = createSlice({
             } 
         },
         editTodo: (state, action) => {
-            const { id, title, description } = action.payload;
-            const editTodo = state.todos.find(todo => todo.id === id);
-          
-    
-          },
-          
+            
+            if (action.payload) {
+           
+                const id = action.payload.id;
+                const selectedTodo = state.todos?.find(todo => todo?.id === id);
+                if (selectedTodo) {
+                    selectedTodo.title = state.editTitle;
+                    selectedTodo.description = state.editDescription;
+
+                }
+                
+                
+                console.log(JSON.stringify(selectedTodo))
+            } 
+        },
+        changeEditTitle: (state, action) => {
+            state.editTitle = action.payload
+           
+        },
+        changeEditDescription: (state, action) => {
+            state.editDescription = action.payload
+        },
+ 
         
         
     }
 });
 
-export const { addTodo, deleteTodo, showTodos, completedTodo,toggleEvent, editTodo } = todoSlice.actions;
+export const { addTodo, deleteTodo, showTodos, completedTodo,toggleEvent,changeEditTitle, editTodo, changeEditDescription } = todoSlice.actions;
 
 
 export const todoReducer = todoSlice.reducer;
