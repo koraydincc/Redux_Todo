@@ -74,16 +74,17 @@ const todoSlice = createSlice({
             const selectedTodo = state.todos.find(todo => todo.id === id);
            
             if (selectedTodo) {
-                // Seçili todo'nun başlık ve açıklamasını güncelle
                 selectedTodo.title = state.editTitle;
                 selectedTodo.description = state.editDescription;
             }
+
+
+        },
+       clearEditValues: (state) => {
+             state.editTitle = '';
+             state.editDescription = '';
         },
         
-        
-        
-   
-    
         changeEditTitle: (state, action) => {
             state.editTitle = action.payload
            
@@ -91,26 +92,14 @@ const todoSlice = createSlice({
         changeEditDescription: (state, action) => {
             state.editDescription = action.payload
         },
-        extraReducers(builder) {
-            builder.addCase(editTodo, (state, action) => {
-                debugger;
-                return {
-                    ...state,
-                    editTitle: '',
-                    editDescription: '',
-                    
-                    
-                };
-          
-            });
-        },
+    
  
         
         
     }
 });
 
-export const { addTodo, deleteTodo, showTodos, completedTodo,toggleEvent,changeEditTitle, editTodo, changeEditDescription, clearEditFields } = todoSlice.actions;
+export const { addTodo, deleteTodo, showTodos, completedTodo,toggleEvent,changeEditTitle, editTodo, changeEditDescription, clearEditValues } = todoSlice.actions;
 
 
 export const todoReducer = todoSlice.reducer;

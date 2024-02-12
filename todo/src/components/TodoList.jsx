@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Card, Modal, message, Typography, Popconfirm   } from 'antd';
-import { DeleteOutlined,SmileTwoTone, EditOutlined,QuestionCircleOutlined , CheckCircleOutlined, RedoOutlined, FrownTwoTone, MehTwoTone   } from '@ant-design/icons';
-import { completedTodo, deleteTodo, toggleEvent, editTodo, clearEditFields } from '../store/slices/todoSlice';
+import { DeleteOutlined,SmileTwoTone, EditOutlined , CheckCircleOutlined, RedoOutlined, FrownTwoTone, MehTwoTone   } from '@ant-design/icons';
+import { completedTodo, deleteTodo, toggleEvent, editTodo, clearEditValues } from '../store/slices/todoSlice';
 
 import EditModal from './EditModal';
 
@@ -13,11 +13,9 @@ function TodoList() {
 
   
   const [editModal, setEditModal] = useState(false);
-  const selectedTodoId = useSelector((state) => state.todo.selectedTodoId);
+  const [editedTodo, setEditedTodo] = useState(null)
   const dispatch = useDispatch();
   const todos = useSelector((state) => state.todo.todos);
-  const editTitle = useSelector(state => state.todo.editTitle)
-  const editDescription = useSelector(state => state.todo.editDescription)
   const visibilityFilter = useSelector((state) => state.todo.visibilityFilter);
   const completedTodos = useSelector((state) => state.todo.completedTodos);
 
@@ -83,32 +81,27 @@ function TodoList() {
   }
 
   const handleEdit = (todo) => {
-    console.log(todo)
-    dispatch(editTodo({
-      id: todo.id,
-      title: todo.title,
-      description: todo.description
-    }))
-    setEditModal(true)
-  }
+    console.log(todo);
+    setEditedTodo({
+        id: todo.id,
+        title: todo.title,
+        description: todo.description
+    });
+ 
+    setEditModal(true);
+    
   
-  const handleEditConfirm = () => {
-    // Düzenlenmiş başlık ve açıklamayı al
-    const editedTitle = editTitle;
-    const editedDescription = editDescription;
-
-    // Düzenlenmiş veriyi gönder
-    dispatch(editTodo({
-        id: selectedTodoId, // Seçili todo'nun ID'si
-        title: editedTitle,
-        description: editedDescription
-    }));
-
-    // Edit modal'ı kapat
-    setEditModal(false);
-
-    // Başarılı bir mesaj göster
-    message.success('Changes Saved !');
+};
+  
+const handleEditConfirm = () => {
+  dispatch(editTodo({
+      id: editedTodo.id,
+      title: editedTodo.title,
+      description: editedTodo.description
+  }));
+  dispatch(clearEditValues(' '))
+  setEditModal(false);
+  message.success('Changes Saved!');
 };
 
   
@@ -185,7 +178,7 @@ function TodoList() {
         }}
 
         >
-              <EditModal />
+              <EditModal  editedTodo= {editedTodo}/>
 
 
         </Modal>

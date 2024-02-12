@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Form, Input } from 'antd';
 import PropTypes from 'prop-types';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { changeEditDescription, changeEditTitle } from '../store/slices/todoSlice';
 
 function EditModal(props) {
     const dispatch = useDispatch();
+    const editTitle = useSelector(state => state.todo.editTitle);
+    const editDescription = useSelector(state => state.todo.editDescription);
 
- 
 
+  
     const handleTitleChange = (e) => {
     
         dispatch(changeEditTitle(e.target.value));
@@ -33,12 +35,14 @@ function EditModal(props) {
         >
             <Form.Item
                 label="Title"
-                
+              
                 validateTrigger="onBlur"
             >
                 <Input
-                    
-                    placeholder='dasdsa'
+                     maxLength={20}
+                    showCount
+                    value={editTitle}
+                    placeholder={props.editedTodo.title}
                     onChange={handleTitleChange}
                 />
             </Form.Item>
@@ -47,7 +51,8 @@ function EditModal(props) {
                 validateTrigger="onBlur"
             >
                 <Input.TextArea
-                     placeholder='dsadsadsadas'
+                    value={editDescription}
+                     placeholder= {props.editedTodo.description}
                     onChange={handleDescriptionChange}
                     style={{ maxHeight: 100, resize: 'none' }}
                     showCount
@@ -61,7 +66,7 @@ function EditModal(props) {
 }
 
 EditModal.propTypes = {
-    selectedEdit: PropTypes.object,
+    editedTodo: PropTypes.object,
 };
 
 export default EditModal;
