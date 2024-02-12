@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Card, Modal, message, Typography, Popconfirm   } from 'antd';
 import { DeleteOutlined,SmileTwoTone, EditOutlined,QuestionCircleOutlined , CheckCircleOutlined, RedoOutlined, FrownTwoTone, MehTwoTone   } from '@ant-design/icons';
-import { completedTodo, deleteTodo, toggleEvent, editTodo } from '../store/slices/todoSlice';
+import { completedTodo, deleteTodo, toggleEvent, editTodo, clearEditFields } from '../store/slices/todoSlice';
+
 import EditModal from './EditModal';
 
 
@@ -10,12 +11,14 @@ const { Text, Title  } = Typography;
 
 function TodoList() {
 
-  const [selectedEdit, setSelectedEdit] = useState(null)
+  
   const [editModal, setEditModal] = useState(false);
+  const selectedTodoId = useSelector((state) => state.todo.selectedTodoId);
   const dispatch = useDispatch();
   const todos = useSelector((state) => state.todo.todos);
+  const editTitle = useSelector(state => state.todo.editTitle)
+  const editDescription = useSelector(state => state.todo.editDescription)
   const visibilityFilter = useSelector((state) => state.todo.visibilityFilter);
-  
   const completedTodos = useSelector((state) => state.todo.completedTodos);
 
   const handleCompleted = (id, title, description, completed) => {
@@ -28,6 +31,7 @@ function TodoList() {
     message.success('Mission Completed ! ')
   };
   const editCancel = () => {
+ 
     setEditModal(false);
   }; 
 
@@ -55,12 +59,12 @@ function TodoList() {
               )
               case 'Active':
                 return (
-                  <Title type='secondary' level={4}>You do not have active duty <FrownTwoTone /></Title>
+                  <Title type='secondary' level={4}>You do not have active ToDo <FrownTwoTone /></Title>
                 )
                 case 'Completed':
                   return (
                     <Title type='secondary' level={4}>
-                    You have no completed tasks <MehTwoTone /></Title>
+                    You have no completed ToDo <MehTwoTone /></Title>
                   )
             }
        }
@@ -78,36 +82,35 @@ function TodoList() {
     return [];
   }
 
-  
-
   const handleEdit = (todo) => {
-    
-    const previousData = { id: todo.id, title: todo.title, description: todo.description };
-
- 
-    setEditModal(true);
-    setSelectedEdit(previousData);
-};
-
-const handleEditConfirm = (editedData) => {
-   
+    console.log(todo)
     dispatch(editTodo({
-        id: editedData.id,
-        title: editedData.title,
-        description: editedData.description
+      id: todo.id,
+      title: todo.title,
+      description: todo.description
+    }))
+    setEditModal(true)
+  }
+  
+  const handleEditConfirm = () => {
+    // Düzenlenmiş başlık ve açıklamayı al
+    const editedTitle = editTitle;
+    const editedDescription = editDescription;
+
+    // Düzenlenmiş veriyi gönder
+    dispatch(editTodo({
+        id: selectedTodoId, // Seçili todo'nun ID'si
+        title: editedTitle,
+        description: editedDescription
     }));
 
-    clearForm(editedData)
-
+    // Edit modal'ı kapat
     setEditModal(false);
+
+    // Başarılı bir mesaj göster
+    message.success('Changes Saved !');
 };
 
-const clearForm = (props) => {
-   return (props.title =' ',
-  props.description = '')
-}
-
-  
   
  
   
@@ -149,7 +152,7 @@ const clearForm = (props) => {
                     if (todo.completed) {
                         message.warning('You cannot edit a completed task.');
                     } else {
-                        handleEdit(todo);
+                        handleEdit(todo)
                     }
                 }}
                 
@@ -170,25 +173,25 @@ const clearForm = (props) => {
               </Text>
             </div>
           </div>
-         
+          
         </Card>
       ))}
       <Modal
         title='Edit'
         open={editModal}
-        onOk={() => handleEditConfirm(selectedEdit) }
+        onOk={() => handleEditConfirm() }
         onCancel={() => {
           editCancel()
         }}
 
         >
-              <EditModal title={selectedEdit ? selectedEdit.title : ""} description={selectedEdit ? selectedEdit.description : ""} />
+              <EditModal />
 
 
         </Modal>
 
      
-      
+        
     </>
   );
 }

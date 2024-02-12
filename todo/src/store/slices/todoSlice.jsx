@@ -15,6 +15,7 @@ const todoSlice = createSlice({
         visibilityFilter: '',
         editTitle: '',
         editDescription:'',
+        selectedEditTodos: [],
        
     },
     reducers:{
@@ -37,7 +38,7 @@ const todoSlice = createSlice({
         showTodos(state, action) {
             
             state.visibilityFilter = action.payload;
-            console.log(state.visibilityFilter)
+           
         },
         completedTodo: (state, action) => {
             const id = action.payload.id;
@@ -69,21 +70,20 @@ const todoSlice = createSlice({
             } 
         },
         editTodo: (state, action) => {
-            
-            if (action.payload) {
+            const { id, title, description } = action.payload;
+            const selectedTodo = state.todos.find(todo => todo.id === id);
            
-                const id = action.payload.id;
-                const selectedTodo = state.todos?.find(todo => todo?.id === id);
-                if (selectedTodo) {
-                    selectedTodo.title = state.editTitle;
-                    selectedTodo.description = state.editDescription;
-
-                }
-                
-                
-                console.log(JSON.stringify(selectedTodo))
-            } 
+            if (selectedTodo) {
+                // Seçili todo'nun başlık ve açıklamasını güncelle
+                selectedTodo.title = state.editTitle;
+                selectedTodo.description = state.editDescription;
+            }
         },
+        
+        
+        
+   
+    
         changeEditTitle: (state, action) => {
             state.editTitle = action.payload
            
@@ -91,13 +91,26 @@ const todoSlice = createSlice({
         changeEditDescription: (state, action) => {
             state.editDescription = action.payload
         },
+        extraReducers(builder) {
+            builder.addCase(editTodo, (state, action) => {
+                debugger;
+                return {
+                    ...state,
+                    editTitle: '',
+                    editDescription: '',
+                    
+                    
+                };
+          
+            });
+        },
  
         
         
     }
 });
 
-export const { addTodo, deleteTodo, showTodos, completedTodo,toggleEvent,changeEditTitle, editTodo, changeEditDescription } = todoSlice.actions;
+export const { addTodo, deleteTodo, showTodos, completedTodo,toggleEvent,changeEditTitle, editTodo, changeEditDescription, clearEditFields } = todoSlice.actions;
 
 
 export const todoReducer = todoSlice.reducer;

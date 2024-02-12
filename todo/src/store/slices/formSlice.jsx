@@ -26,6 +26,7 @@ const formSlice = createSlice({
     },
     extraReducers(builder) {
         builder.addCase(addTodo, (state, action) => {
+          
             return {
                 ...state,
                 title: '',
@@ -33,17 +34,12 @@ const formSlice = createSlice({
                 segmented: 'Active'
                 
             };
+           
         });
     },
-    extraRedu(builder) {
-        builder.addCase(editTodo, (state,action) => {
-            return {
-                ...state,
-                editTitle: '',
-                editDescription: ''
-            }
-        })
-    }
+
+  
+  
     
     
 })
